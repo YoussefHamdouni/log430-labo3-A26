@@ -77,9 +77,16 @@ def update_stock_redis(order_items, operation):
             if hasattr(item, 'product_id'):
                 product_id = item.product_id
                 quantity = item.quantity
+                name = getattr(item, 'name', None)
+                sku = getattr(item, 'sku', None)
+                price = getattr(item, 'price', None)
             else:
                 product_id = item['product_id']
                 quantity = item['quantity']
+                name = item.get('name')
+                sku = item.get('sku')
+                price = item.get('price')
+            
             # TODO: ajoutez plus d'information sur l'article
             current_stock = r.hget(f"stock:{product_id}", "quantity")
             current_stock = int(current_stock) if current_stock else 0
@@ -89,7 +96,13 @@ def update_stock_redis(order_items, operation):
             else:  
                 new_quantity = current_stock - quantity
             
-            pipeline.hset(f"stock:{product_id}", "quantity", new_quantity)
+            # Prepare mapping to save all fields in Redis simultaneously
+            stock_data = {"quantity": new_quantity}
+            if name: stock_data["name"] = name
+            if sku: stock_data["sku"] = sku
+            if price is not None: stock_data["price"] = price
+            
+            pipeline.hset(f"stock:{product_id}", mapping=stock_data)
         
         pipeline.execute()
     
