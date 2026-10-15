@@ -43,16 +43,15 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
 
--- Product stocks 
--- ATTENTION: Veuillez créer cette table manuellement dans le cadre des activités
-/* 
+-- Product stocks
+-- Table créée d'abord dans MySQL Workbench (activité 1, voir labo03.mwb),
+-- puis reportée ici par forward engineering pour que Docker et la CI la recréent.
 DROP TABLE IF EXISTS stocks;
 CREATE TABLE stocks (
     product_id INT PRIMARY KEY,
     quantity INT NOT NULL DEFAULT 0,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
-*/
 
 -- Mock data: users
 INSERT INTO users (name, email) VALUES
@@ -66,3 +65,10 @@ INSERT INTO products (name, sku, price) VALUES
 ('Keyboard DEF', 'KB67890', 59.50),
 ('Gadget XYZ', 'GG12345', 5.75),
 ('27-inch Screen WYZ', 'SC27289', 299.75);
+
+-- Mock data: stocks (activité 1.4)
+INSERT INTO stocks (product_id, quantity) VALUES
+(1, 1000),
+(2, 500),
+(3, 2),
+(4, 90);
