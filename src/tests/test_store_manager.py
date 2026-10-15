@@ -26,7 +26,7 @@ def test_stock_flow(client):
                           data=json.dumps(product_data),
                           content_type='application/json')
     
-    assert response.status_code == 201
+    assert response.status_code == 201, response.get_json()
     product_id = response.get_json()['product_id']
     assert product_id > 0
 
